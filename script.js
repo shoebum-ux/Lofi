@@ -272,15 +272,26 @@ function setupEventListeners() {
     console.log('👂 Event listeners setup complete');
 }
 
-// Hide instruction text on first interaction
+// Hide instruction text and keyboard controls on first interaction
 function hideInstructionText() {
     if (instructionTextVisible) {
         const instructionElement = document.getElementById('instruction-text');
+        const keyboardControlsElement = document.getElementById('keyboard-controls');
+        
         if (instructionElement) {
             instructionElement.classList.add('hidden');
-            instructionTextVisible = false;
-            console.log('📝 Instruction text hidden');
         }
+        
+        // Hide keyboard controls after 10 seconds with fade out
+        if (keyboardControlsElement) {
+            setTimeout(() => {
+                keyboardControlsElement.classList.add('fade-out');
+                console.log('📝 Keyboard controls fading out after 10 seconds');
+            }, 10000); // 10 seconds = 10,000 milliseconds
+        }
+        
+        instructionTextVisible = false;
+        console.log('📝 Instruction text hidden, keyboard controls will fade out in 10 seconds');
     }
 }
 

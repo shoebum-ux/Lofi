@@ -282,6 +282,57 @@ body.loading .piano-wrapper {
     visibility: hidden;
 }
 
+/* Keyboard controls instructions */
+.keyboard-controls {
+    position: fixed;
+    top: 50%;
+    right: 50px;
+    transform: translateY(calc(-50% + 318px));
+    font-family: 'Bitcount Grid Single', monospace;
+    font-size: 12px;
+    color: #ED2CFF;
+    text-align: center;
+    z-index: 99999;
+    pointer-events: none;
+    opacity: 0;
+    background: rgba(0, 0, 0, 0.45);
+    padding: 4px 4px 4px 8px;
+    border-radius: 8px;
+    border: 2px solid rgba(237, 44, 255, 0.5);
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.8);
+    letter-spacing: 0.5px;
+    font-weight: 400;
+    line-height: 1.4;
+    width: 220px;
+    height: 120px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    white-space: nowrap;
+    animation: fadeInKeyboardControls 1s ease-in-out 2.5s forwards;
+    transition: opacity 0.5s ease-out;
+}
+
+.keyboard-controls.hidden {
+    opacity: 0;
+    visibility: hidden;
+}
+
+.keyboard-controls.fade-out {
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 2s ease-out, visibility 2s ease-out;
+}
+
+.control-line {
+    margin-bottom: 4px;
+}
+
+.control-header {
+    font-weight: bold;
+    margin-bottom: 8px;
+}
+
 /* Keyframe animations for piano entrance */
 @keyframes pianoSlideUp {
     0% {
@@ -311,5 +362,14 @@ body.loading .piano-wrapper {
     }
     100% {
         opacity: 1;
+    }
+}
+
+@keyframes fadeInKeyboardControls {
+    0% {
+        opacity: 0;
+    }
+    100% {
+        opacity: 0.5;
     }
 } 
