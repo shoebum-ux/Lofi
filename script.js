@@ -1,21 +1,236 @@
+// Asset loading progress tracking
+let assetsLoaded = 0;
+let totalAssets = 0;
+let loadingComplete = false;
+
 // Initialize the application when DOM is loaded
 document.addEventListener('DOMContentLoaded', async () => {
     console.log('🎹 Lofi Piano Experience Loading...');
     
-    // Add loading state
-    document.body.classList.add('loading');
+    // Start asset loading with progress tracking
+    await initializeAssetsWithProgress();
+});
+
+// Asset loading with progress tracking
+async function initializeAssetsWithProgress() {
+    const progressBar = document.getElementById('loading-progress');
+    const loadingOverlay = document.getElementById('loading-overlay');
     
-    // Initialize audio context and instruments
+    // Hide scene content initially (everything except loading overlay)
+    hideSceneContent();
+    
+    // Define all assets to track
+    const assets = [
+        { type: 'video', src: 'Lofi Background.mov' },
+        { type: 'audio', src: 'Lofi backing track.mp3' },
+        { type: 'image', src: 'pianolayout.png' },
+        { type: 'audio', src: 'PADs/PAD01.wav' },
+        { type: 'audio', src: 'PADs/PAD02.wav' },
+        { type: 'audio', src: 'PADs/PAD03.wav' },
+        { type: 'audio', src: 'PADs/PAD04.wav' },
+        { type: 'audio', src: 'PADs/PAD05.wav' },
+        { type: 'audio', src: 'PADs/PAD06.wav' },
+        { type: 'audio', src: 'PADs/PAD07.wav' }
+    ];
+    
+    totalAssets = assets.length;
+    assetsLoaded = 0;
+    
+    console.log(`📦 Loading ${totalAssets} assets...`);
+    
+    // Load all assets
+    const loadPromises = assets.map(asset => loadAsset(asset, progressBar));
+    await Promise.all(loadPromises);
+    
+    // Initialize audio and setup
     await initializeAudio();
-    
-    // Set up event listeners
     setupEventListeners();
     
-    // Remove loading state
-    document.body.classList.remove('loading');
+    // Complete loading process
+    loadingComplete = true;
+    console.log('🎵 All assets loaded, starting scene transition...');
     
-    console.log('🎵 Ready to play!');
-});
+    // Gradual transition sequence
+    setTimeout(() => {
+        // Step 1: Hide loading bar first
+        const loadingContainer = document.getElementById('loading-container');
+        if (loadingContainer) {
+            loadingContainer.style.opacity = '0';
+            loadingContainer.style.transition = 'opacity 0.8s ease-out';
+        }
+        
+        // Step 2: After loading bar fades, gradually fade black background
+        setTimeout(() => {
+            loadingOverlay.style.opacity = '0.7';
+            loadingOverlay.style.transition = 'opacity 1.2s ease-out';
+            
+            // Show scene content while background is still partially visible
+            showSceneContent();
+            
+            // Step 3: Continue fading background
+            setTimeout(() => {
+                loadingOverlay.style.opacity = '0';
+                
+                // Step 4: Start piano animations after background fully fades
+                setTimeout(() => {
+                    startPianoAnimations();
+                }, 500); // Start animations shortly after background disappears
+                
+                // Step 5: Remove overlay completely after transition
+                setTimeout(() => {
+                    loadingOverlay.style.display = 'none';
+                }, 1200); // After opacity transition completes
+                
+            }, 600); // Continue fading background
+        }, 800); // Wait for loading bar to disappear
+    }, 500); // Initial delay
+}
+
+function loadAsset(asset, progressBar) {
+    return new Promise((resolve, reject) => {
+        let element;
+        
+        if (asset.type === 'video') {
+            element = document.querySelector('video');
+            if (element) {
+                const onLoad = () => {
+                    updateProgress(progressBar);
+                    element.removeEventListener('loadeddata', onLoad);
+                    element.removeEventListener('error', onError);
+                    resolve();
+                };
+                const onError = () => {
+                    console.warn(`⚠️ Could not load video: ${asset.src}`);
+                    updateProgress(progressBar);
+                    element.removeEventListener('loadeddata', onLoad);
+                    element.removeEventListener('error', onError);
+                    resolve(); // Resolve anyway to not block loading
+                };
+                element.addEventListener('loadeddata', onLoad);
+                element.addEventListener('error', onError);
+                element.load(); // Force reload
+                return;
+            }
+        } else if (asset.type === 'audio') {
+            element = new Audio();
+            element.src = asset.src;
+        } else if (asset.type === 'image') {
+            element = new Image();
+            element.src = asset.src;
+        }
+        
+        if (element) {
+            element.onload = element.onloadeddata = () => {
+                updateProgress(progressBar);
+                resolve();
+            };
+            element.onerror = () => {
+                console.warn(`⚠️ Could not load ${asset.type}: ${asset.src}`);
+                updateProgress(progressBar);
+                resolve(); // Resolve anyway to not block loading
+            };
+            
+            // For audio/image, trigger loading
+            if (asset.type === 'audio' || asset.type === 'image') {
+                element.src = asset.src;
+            }
+        } else {
+            updateProgress(progressBar);
+            resolve();
+        }
+    });
+}
+
+function updateProgress(progressBar) {
+    assetsLoaded++;
+    const percentage = (assetsLoaded / totalAssets) * 100;
+    progressBar.style.width = `${percentage}%`;
+    console.log(`📦 Loaded asset ${assetsLoaded}/${totalAssets} (${Math.round(percentage)}%)`);
+}
+
+function hideSceneContent() {
+    // Hide all scene elements during loading
+    const elementsToHide = [
+        'bg-video',
+        'piano-container', 
+        'instruction-text',
+        'keyboard-controls'
+    ];
+    
+    elementsToHide.forEach(id => {
+        const element = document.getElementById(id);
+        if (element) {
+            element.style.opacity = '0';
+            element.style.visibility = 'hidden';
+        }
+    });
+}
+
+function showSceneContent() {
+    // Show video background
+    const bgVideo = document.getElementById('bg-video');
+    if (bgVideo) {
+        bgVideo.style.opacity = '1';
+        bgVideo.style.visibility = 'visible';
+        bgVideo.style.transition = 'opacity 0.5s ease-in-out, visibility 0.5s ease-in-out';
+    }
+    
+    // Show piano container but keep it in starting position (off-screen)
+    const pianoContainer = document.getElementById('piano-container');
+    if (pianoContainer) {
+        pianoContainer.style.visibility = 'visible';
+        pianoContainer.style.opacity = '1';
+    }
+    
+    // Ensure piano elements start in their initial positions
+    const pianoWrapper = document.querySelector('.piano-wrapper');
+    const pianoBackground = document.querySelector('.piano-background');
+    
+    if (pianoWrapper) {
+        pianoWrapper.style.transform = 'translateZ(0) translateY(100vh) translateX(0px)';
+        pianoWrapper.style.visibility = 'visible';
+    }
+    if (pianoBackground) {
+        pianoBackground.style.transform = 'translateZ(0) translateY(calc(100vh + 22px))';
+        pianoBackground.style.visibility = 'visible';
+    }
+    
+    // Keep instruction texts hidden initially - they'll appear with animations
+    const instructionText = document.getElementById('instruction-text');
+    const keyboardControls = document.getElementById('keyboard-controls');
+    if (instructionText) {
+        instructionText.style.visibility = 'visible';
+    }
+    if (keyboardControls) {
+        keyboardControls.style.visibility = 'visible';
+    }
+}
+
+function startPianoAnimations() {
+    // Trigger the piano slide-up animation
+    const pianoWrapper = document.querySelector('.piano-wrapper');
+    const pianoBackground = document.querySelector('.piano-background');
+    
+    if (pianoWrapper) {
+        pianoWrapper.style.animation = 'pianoSlideUp 2s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards';
+    }
+    if (pianoBackground) {
+        pianoBackground.style.animation = 'pianoBackgroundSlideUp 2s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards';
+    }
+    
+    // Show instruction text after piano animation
+    setTimeout(() => {
+        const instructionText = document.getElementById('instruction-text');
+        const keyboardControls = document.getElementById('keyboard-controls');
+        
+        if (instructionText) {
+            instructionText.style.animation = 'fadeInText 1s ease-in-out forwards';
+        }
+        if (keyboardControls) {
+            keyboardControls.style.animation = 'fadeInKeyboardControls 1s ease-in-out forwards';
+        }
+    }, 2500); // 2.5s delay as before
+}
 
 // Audio setup
 let pianoSynth;

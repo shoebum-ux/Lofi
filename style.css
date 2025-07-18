@@ -56,9 +56,9 @@ body.loading .piano-wrapper {
     z-index: 1000;
     filter: brightness(1.2) contrast(1.1) saturate(1.1);
     will-change: transform;
-    transform: translateZ(0) translateY(302px) translateX(0px);
+    transform: translateZ(0) translateY(100vh) translateX(0px);
     mix-blend-mode: normal;
-    animation: pianoSlideUp 2s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+    /* Animation will be triggered by JavaScript after loading */
 }
 
 /* Piano background - positioned independently */
@@ -71,13 +71,13 @@ body.loading .piano-wrapper {
     z-index: 999;
     filter: brightness(1.2) contrast(1.1) saturate(1.1);
     will-change: transform;
-    transform: translateZ(0) translateY(324px);
+    transform: translateZ(0) translateY(calc(100vh + 22px));
     mix-blend-mode: normal;
     left: 50%;
     top: 50%;
     margin-left: -400px;
     margin-top: -150px;
-    animation: pianoBackgroundSlideUp 2s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+    /* Animation will be triggered by JavaScript after loading */
 }
 
 /* SVG piano styling */
@@ -257,6 +257,47 @@ body.loading .piano-wrapper {
     pointer-events: none;
 } 
 
+/* Loading overlay - full screen black background */
+.loading-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: #000;
+    z-index: 10000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Overlay transitions handled by JavaScript for precise timing */
+
+/* Loading progress bar */
+.loading-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.loading-bar {
+    width: 200px;
+    height: 4px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 2px;
+    overflow: hidden;
+    border: 1px solid #ED2CFF;
+}
+
+.loading-progress {
+    height: 100%;
+    width: 0%;
+    background: #ED2CFF;
+    transition: width 0.3s ease;
+    border-radius: 1px;
+}
+
 /* Instruction text overlay */
 .instruction-text {
     position: fixed;
@@ -274,7 +315,7 @@ body.loading .piano-wrapper {
     text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
     letter-spacing: 0.5px;
     font-weight: 400;
-    animation: fadeInText 1s ease-in-out 2.5s forwards;
+    /* Animation will be triggered by JavaScript after loading */
 }
 
 .instruction-text.hidden {
@@ -309,7 +350,7 @@ body.loading .piano-wrapper {
     flex-direction: column;
     justify-content: center;
     white-space: nowrap;
-    animation: fadeInKeyboardControls 1s ease-in-out 2.5s forwards;
+    /* Animation will be triggered by JavaScript after loading */
     transition: opacity 0.5s ease-out;
 }
 
