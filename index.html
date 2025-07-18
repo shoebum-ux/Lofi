@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lofi Piano Experience</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://unpkg.com/tone@14.8.49/build/Tone.js"></script>
+</head>
+<body>
+    <!-- Fullscreen video background -->
+    <video id="bg-video" autoplay muted loop>
+        <source src="Lofi Background.mov" type="video/mp4">
+        Your browser does not support the video tag.
+    </video>
+
+    <!-- Backing track audio -->
+    <audio id="backing-track" loop preload="auto">
+        <source src="Lofi backing track.mp3" type="audio/mpeg">
+        Your browser does not support the audio element.
+    </audio>
+
+    <!-- Instruction text overlay -->
+    <div class="instruction-text" id="instruction-text">
+        click or press button to play
+    </div>
+
+    <!-- Main container for the piano -->
+    <div class="piano-container">
+        <!-- PNG Background layer -->
+        <div class="piano-background"></div>
+        
+        <div class="piano-wrapper">
+            <!-- SVG Piano Overlay -->
+            <svg width="683" height="249" viewBox="0 0 683 249" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" id="piano-svg">
+                <rect y="45" width="683" height="204"/>
+                
+                <!-- 7 Pads (Green) - Hidden by default -->
+                <path class="pad" data-key="49" data-note="C4" d="M285.055 83.9474L285.95 66.9474C285.978 66.4163 286.417 66 286.949 66H318.918C319.501 66 319.961 66.4972 319.915 67.0787L318.573 84.0787C318.532 84.5988 318.098 85 317.576 85H286.054C285.481 85 285.025 84.5196 285.055 83.9474Z"/>
+                <path class="pad" data-key="50" data-note="D4" d="M334.974 84.0263L334.527 67.0263C334.512 66.4639 334.964 66 335.527 66H363.146C363.638 66 364.057 66.358 364.133 66.844L366.817 83.844C366.913 84.451 366.444 85 365.83 85H335.974C335.432 85 334.989 84.5682 334.974 84.0263Z"/>
+                <path class="pad" data-key="51" data-note="E4" d="M380.927 84.0787L379.585 67.0787C379.539 66.4972 379.999 66 380.582 66H407.729C408.183 66 408.581 66.3062 408.696 66.7455L413.17 83.7455C413.337 84.3796 412.858 85 412.203 85H381.924C381.402 85 380.968 84.5988 380.927 84.0787Z"/>
+                <path class="pad" data-key="52" data-note="F4" d="M429.318 84.2305L425.291 67.2305C425.143 66.6024 425.619 66 426.265 66H451.82C452.23 66 452.599 66.2509 452.75 66.6328L459.46 83.6328C459.719 84.2891 459.236 85 458.53 85H430.291C429.827 85 429.425 84.6815 429.318 84.2305Z"/>
+                <path class="pad" data-key="53" data-note="G4" d="M475.269 84.3237L469.453 67.3237C469.231 66.6747 469.713 66 470.399 66H496.382C496.761 66 497.107 66.214 497.276 66.5528L505.776 83.5528C506.109 84.2177 505.625 85 504.882 85H476.215C475.787 85 475.407 84.7282 475.269 84.3237Z"/>
+                <path class="pad" data-key="54" data-note="A4" d="M524.729 84.4281L516.676 67.4281C516.362 66.7646 516.846 66 517.58 66H542.436C542.786 66 543.111 66.1829 543.292 66.4822L553.581 83.4822C553.985 84.1486 553.505 85 552.726 85H525.633C525.246 85 524.895 84.7773 524.729 84.4281Z"/>
+                <path class="pad" data-key="55" data-note="B4" d="M571.208 84.5178L560.919 67.5178C560.515 66.8514 560.995 66 561.774 66H584.484C584.808 66 585.111 66.1568 585.299 66.4208L597.378 83.4208C597.848 84.0829 597.375 85 596.563 85H572.064C571.714 85 571.389 84.8171 571.208 84.5178Z"/>
+
+                <!-- White Keys (Blue) - Hidden by default -->
+                <path class="white-key" data-key="65" data-note="C3" d="M41.5 168L71 115H86L72 147H84L74.5 168H41.5Z"/>
+                <path class="white-key" data-key="83" data-note="D3" d="M76.5 168L86 147L97.5 146.5L112.5 115H120L109.5 146L117 146.5L109 168H76.5Z"/>
+                <path class="white-key" data-key="68" data-note="E3" d="M110.5 167.5L118.5 147L131 147.5L145 114.5H161.5L142.5 167.5H110.5Z"/>
+                <path class="white-key" data-key="70" data-note="F3" d="M253 167.5L254 146.5H266.5L269 114.5H286.5L284.5 167.5H253Z"/>
+                <path class="white-key" data-key="71" data-note="G3" d="M356 167.5L354.5 146.5H367L364.5 114.5H379.5L387.5 167.5H356Z"/>
+                <path class="white-key" data-key="72" data-note="A3" d="M492.5 167.5L486.5 146.5H499.5L489 114.5H505.5L525 167.5H492.5Z"/>
+                <path class="white-key" data-key="74" data-note="B3" d="M589.5 167.5L578 146.5H596L580.5 114.5H592L619.5 167.5H589.5Z"/>
+                <path class="white-key" data-key="75" data-note="C4" d="M621.5 167.5L594.5 114.5H613L645.5 167.5H621.5Z"/>
+                <path class="white-key" data-key="76" data-note="D4" d="M179 114.5H163.5L144.5 167.5H177L182 146H171L179 114.5Z"/>
+                <path class="white-key" data-key="186" data-note="E4" d="M305.5 114.5H289L287 167.5H318.5V146H305.5V114.5Z"/>
+                <path class="white-key" data-key="222" data-note="F4" d="M398 114.5H382L389.5 167.5H420.5L416.5 146H404L398 114.5Z"/>
+                <path class="white-key" data-key="13" data-note="G4" d="M520.5 114.5H507.5L526.5 167.5H557.5L547.5 147H536.5L520.5 114.5Z"/>
+                <path class="white-key" data-key="90" data-note="A4" d="M179 167.5L184.5 146.5H193.5L201.5 115H214.5L208.5 146.5H216.5L213.5 167.5H179Z"/>
+                <path class="white-key" data-key="88" data-note="B4" d="M215.5 167.5L218 146.5H229.5L234 115H249L246.5 146.5H252L251 167.5H215.5Z"/>
+                <path class="white-key" data-key="67" data-note="C5" d="M321 167.5V146.5H328L327 115H342L344.5 146.5H352.5L353.5 167.5H321Z"/>
+                <path class="white-key" data-key="86" data-note="D5" d="M423 167.5L419 146.5H426.5L420 115L433 114.5L441.5 146.5L450.5 146.5L457 167.5H423Z"/>
+                <path class="white-key" data-key="66" data-note="E5" d="M459.5 167.5L453 146.5H461.5L455 115H468L477.5 145.5L484.5 146.5L490.5 167.5H459.5Z"/>
+                <path class="white-key" data-key="78" data-note="F5" d="M559.5 167.5L549 146.5L558 146.232L543.5 114H556L572.5 146.5H576.5L588 167.5H559.5Z"/>
+
+                <!-- Black Keys (Purple) - Hidden by default -->
+                <path class="black-key" data-key="81" data-note="C#3" d="M82.5 128.5L93 104H104.5L93 128.5H82.5Z"/>
+                <path class="black-key" data-key="87" data-note="D#3" d="M117.5 128.5L127.5 104H138L127 128.5H117.5Z"/>
+                <path class="black-key" data-key="69" data-note="F#3" d="M179 128.5L185.5 104H194.5L188 128.5H179Z"/>
+                <path class="black-key" data-key="82" data-note="G#3" d="M216 128.5L220.5 104H228L224 128.5H216Z"/>
+                <path class="black-key" data-key="84" data-note="A#3" d="M252.5 128.5L254 104H261L260 128.5H252.5Z"/>
+                <path class="black-key" data-key="89" data-note="C#4" d="M349.5 128.5L348 104H355L357.5 128.5H349.5Z"/>
+                <path class="black-key" data-key="85" data-note="D#4" d="M310.5 128.5V104H318.5L319.5 128.5H310.5Z"/>
+                <path class="black-key" data-key="73" data-note="F#4" d="M407 128.5L402.5 104H410L416 128.5H407Z"/>
+                <path class="black-key" data-key="79" data-note="G#4" d="M444.5 128.5L437.5 104H444.5L453.5 128.5H444.5Z"/>
+                <path class="black-key" data-key="80" data-note="A#4" d="M482 128.5L473.5 104H479.5L490 128.5H482Z"/>
+                <path class="black-key" data-key="219" data-note="C#5" d="M538.5 128.5L526.5 104H533L546.5 128.5H538.5Z"/>
+                <path class="black-key" data-key="221" data-note="D#5" d="M576.5 128.5L563 104H569L584.5 128.5H576.5Z"/>
+
+                <defs>
+                    <pattern id="pattern0_13_51" patternContentUnits="objectBoundingBox" width="1" height="1">
+                        <use xlink:href="#image0_13_51" transform="scale(0.00146413 0.00490196)"/>
+                    </pattern>
+                    <image id="image0_13_51" width="683" height="204" preserveAspectRatio="none" xlink:href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAqsAAADMCAYAAABUdeo6AAAACXBIWXMAAAsTAAALEwEAmpwYAAAE9GlUWHRYTUw6Y29tLmFkb2JlLnhtcAAAAAAAPD94cGFja2V0IGJlZ2luPSLvu78i iglkPSJXNU0wTXBDZWhpSHpyZVN6TlRjemtjOWQiPz4gPHg6eG1wbWV0YSB4bWxuczp4PSJhZG9iZTpuczptZXRhLyIgeDp4bXB0az0iQWRvYmUgWE1QIENvcmUgOS4xLWMwMDMgNzkuOTY5MGE4N2ZjLCAyMDI1LzAzLzA2LTIwOjUwOjE2ICAgICAgICAiPiA8cmRmOlJERiB4bWxuczpypmY9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkvMDIvMjItcmRmLXN5bnRheC1ucyMiPiA8cmRmOkRlc2NyaXB0aW9uIHJkZjphYm91dD0iIiB4bWxuczp4bXA9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC8iIHhtbG5zOmRjPSJodHRwOi8vcHVybC5vcmcvZGMvZWxlbWVudHMvMS4xLyIgeG1sbnM6cGhvdG9zaG9wPSJodHRwOi8vbnMuYWRvYmUuY29tL3Bob3Rvc2hvcC8xLjAvIiB4bWxuczp4bXBNTT0iaHR0cDovL25zLmFkb2JlLmNvbS94YXAvMS4wL21tLyIgeG1sbnM6c3RFdnQ9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9zVHlwZS9SZXNvdXJjZUV2ZW50IyIgeG1wOkNyZWF0b3JUb29sPSJBZG9iZSBQaG90b3Nob3AgMjYuOCAoTWFjaW50b3NoKSIgeG1wOkNyZWF0ZURhdGU9IjIwMjUtMDctMThUMDE6NTE6NTErMDU6MzAiIHhtcDpNb2RpZnlEYXRlPSIyMDI1LTA3LTE4VDAxOjU3OjE3KzA1OjMwIiB4bXA6TWV0YWRhdGFEYXRlPSIyMDI1LTA3LTE4VDAxOjU3OjE3KzA1OjMwIiBkYzpmb3JtYXQ9ImltYWdlL3BuZyIgcGhvdG9zaG9wOkNvbG9yTW9kZT0iMyIgeG1wTU06SW5zdGFuY2VJRD0ieG1wLmlpZDplYzI1NzQ2ZS0yYWNiLTQ5NGQtYjljMS01YmZiZTM0ZjlmZjUiIHhtcE1NOkRvY3VtZW50SUQ9InhtcC5kaWQ6ZWMyNTc0NmUtMmFjYi00OTRkLWI5YzEtNWJmYmUzNGY5ZmY1IiB4bXBNTTpPcmlnaW5hbERvY3VtZW50SUQ9InhtcC5kaWQ6ZWMyNTc0NmUtMmFjYi00OTRkLWI5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"/>
+                </defs>
+            </svg>
+        </div>
+
+
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html> 
