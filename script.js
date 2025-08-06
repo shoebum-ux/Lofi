@@ -420,12 +420,20 @@ function hideInstructionText() {
         const keyboardControlsElement = document.getElementById('keyboard-controls');
         
         if (instructionElement) {
+            // Clear any existing animation to prevent it from overriding the hidden class
+            instructionElement.style.animation = 'none';
             instructionElement.classList.add('hidden');
+            
+            // Remove the element completely after fade out
+            setTimeout(() => {
+                instructionElement.style.visibility = 'hidden';
+            }, 1000); // After 1s fade out
         }
         
         // Hide keyboard controls after 10 seconds with fade out
         if (keyboardControlsElement) {
             setTimeout(() => {
+                keyboardControlsElement.style.animation = 'none';
                 keyboardControlsElement.classList.add('fade-out');
                 console.log('📝 Keyboard controls fading out after 10 seconds');
             }, 10000); // 10 seconds = 10,000 milliseconds

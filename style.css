@@ -320,7 +320,7 @@ body.loading .piano-wrapper {
 
 .instruction-text.hidden {
     opacity: 0;
-    visibility: hidden;
+    transition: opacity 1s ease-out;
 }
 
 /* Keyboard controls instructions */
